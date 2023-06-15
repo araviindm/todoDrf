@@ -14,7 +14,7 @@ class TagSerializer(serializers.ModelSerializer):
 class TodoSerializer(serializers.ModelSerializer):
     local_timezone = pytz.timezone('Asia/Kolkata')
     time_stamp = serializers.DateTimeField(default=datetime.now(local_timezone), format='%Y-%m-%d %H:%M:%S')
-    due_date = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', required=False)
+    due_date = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', required=False, allow_null=True)
     tags = TagSerializer(many=True, read_only=True)
     status = serializers.ChoiceField(choices=StatusTypes.choices, required=True)
 
@@ -25,7 +25,7 @@ class TodoSerializer(serializers.ModelSerializer):
         if 'time_stamp' in self.initial_data:
             raise serializers.ValidationError("Time stamp field is not allowed.")
 
-        if time_stamp > due_date:
+        if time_stamp is not None and due_date is not None and time_stamp > due_date:
             raise serializers.ValidationError("Due date cannot be in the past.")
 
         return attrs
