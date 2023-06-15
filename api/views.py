@@ -1,5 +1,10 @@
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.core.exceptions import ObjectDoesNotExist
+
+from .models import Todo
+from .utils import get_todos, get_todo, create_todo, update_todo, delete_todo
 
 
 # Create your views here.
@@ -38,3 +43,29 @@ def get_routes(request):
         },
     ]
     return Response(routes)
+
+
+@api_view(['GET', 'POST'])
+def todos(request):
+    if request.method == 'GET':
+        return get_todos()
+
+    elif request.method == 'POST':
+        return create_todo(request)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def todo(request, pk):
+    try:
+        todo_obj = Todo.objects.get(pk=pk)
+    except ObjectDoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        return get_todo(todo_obj)
+
+    elif request.method == 'PUT':
+        return update_todo(todo_obj, request)
+
+    elif request.method == 'DELETE':
+        return delete_todo(todo_obj)
