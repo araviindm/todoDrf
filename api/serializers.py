@@ -2,20 +2,15 @@ import pytz
 from datetime import datetime
 
 from rest_framework import serializers
-from .models import Todo, Tag, StatusTypes
-
-
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = ['title', 'description', 'due_date', 'tags', 'status']
+from .models import Todo, StatusTypes
 
 
 class TodoSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
     local_timezone = pytz.timezone('Asia/Kolkata')
     time_stamp = serializers.DateTimeField(default=datetime.now(local_timezone), format='%Y-%m-%d %H:%M:%S')
     due_date = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', required=False, allow_null=True)
-    tags = TagSerializer(many=True, read_only=True)
+    tags = serializers.ListField(child=serializers.CharField(), required=False, allow_null=True)
     status = serializers.ChoiceField(choices=StatusTypes.choices, required=True)
 
     def validate(self, attrs):
@@ -32,4 +27,4 @@ class TodoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Todo
-        fields = '__all__'
+        fields = ['id', 'time_stamp', 'title', 'description', 'due_date', 'tags', 'status']
