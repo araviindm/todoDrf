@@ -8,6 +8,7 @@ from .models import Todo, StatusTypes
 class MergeDuplicateStringsListField(serializers.ListField):
     def to_internal_value(self, data):
         value = super().to_internal_value(data)
+        # Removes the duplicate tags
         unique_values = list(set(value))
         return unique_values
 

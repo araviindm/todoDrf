@@ -21,6 +21,7 @@ def get_todos():
 
 
 def process_todo(tags):
+    # Will convert the list of chars to list of string
     tag_list = []
     start_index = None
     for i, item in enumerate(tags):
