@@ -5,12 +5,19 @@ from rest_framework import serializers
 from .models import Todo, StatusTypes
 
 
+class MergeDuplicateStringsListField(serializers.ListField):
+    def to_internal_value(self, data):
+        value = super().to_internal_value(data)
+        unique_values = list(set(value))
+        return unique_values
+
+
 class TodoSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     local_timezone = pytz.timezone('Asia/Kolkata')
     time_stamp = serializers.DateTimeField(default=datetime.now(local_timezone), format='%Y-%m-%d %H:%M:%S')
     due_date = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', required=False, allow_null=True)
-    tags = serializers.ListField(child=serializers.CharField(), required=False, allow_null=True)
+    tags = MergeDuplicateStringsListField(child=serializers.CharField(), required=False, allow_null=True)
     status = serializers.ChoiceField(choices=StatusTypes.choices, required=True)
 
     def validate(self, attrs):
