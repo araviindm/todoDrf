@@ -9,3 +9,7 @@ pip install -r requirements.txt
 
 # To run
 python manage.py runserver 
+
+# To access admin panel
+
+https://araviindm.pythonanywhere.com/admin/
